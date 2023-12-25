@@ -1,0 +1,22 @@
+{{define "home"}}
+<body>
+    <h1>Counters</h1><br/>
+    <table border="1">
+        <th>Counter</th>
+        <th>Count</th>
+        {{range $key, $value := .Counters}}
+           <tr><td>{{$key}}</td><td>{{$value}}</td></tr>
+        {{end}}
+    </table>
+    
+    <h1>Gauges</h1><br/>
+    <table border="1">
+        <th>Gauge</th>
+        <th>Value</th>
+        {{range $key, $value := .Gauges}}
+           <tr><td>{{$key}}</td><td>{{$value}}</td></tr>
+        {{end}}
+    </table>
+</body>
+{{end}}
+
