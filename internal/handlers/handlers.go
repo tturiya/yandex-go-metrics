@@ -69,6 +69,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, "Failed to parse HTML", err)
+		return
 	}
 
 	data := struct {
@@ -83,6 +84,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, "Failed to render HTML ", err)
+		return
 	}
 	w.WriteHeader(http.StatusOK)
 }
