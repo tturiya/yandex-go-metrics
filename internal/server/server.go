@@ -16,7 +16,7 @@ func StartServer() error {
 		cfg = config.NewServerConfig()
 	)
 
-	// set up middleware
+	// set up middleware's
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
