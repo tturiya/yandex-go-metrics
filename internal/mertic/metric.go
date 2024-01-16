@@ -9,10 +9,18 @@ import (
 	"github.com/tturiya/iter5/internal/storage/memstorage"
 )
 
+type MetricsJSON struct {
+	ID    string   `json:"id"`
+	MType string   `json:"type"`
+	Delta *int64   `json:"delta,omitempty"`
+	Value *float64 `json:"value,omitempty"`
+}
+
 func WriteMetric(ms memstorage.MetricsStorer) {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
 
+	ms.AddGauge("MCacheSys", float64(memStats.MCacheSys))
 	ms.AddGauge("Alloc", float64(memStats.Alloc))
 	ms.AddGauge("BuckHashSys", float64(memStats.BuckHashSys))
 	ms.AddGauge("Frees", float64(memStats.Frees))
@@ -28,6 +36,7 @@ func WriteMetric(ms memstorage.MetricsStorer) {
 	ms.AddGauge("Lookups", float64(memStats.Lookups))
 	ms.AddGauge("MCacheInuse", float64(memStats.MCacheInuse))
 	ms.AddGauge("MSpanSys", float64(memStats.MSpanSys))
+	ms.AddGauge("MSpanInuse", float64(memStats.MSpanInuse))
 	ms.AddGauge("Mallocs", float64(memStats.Mallocs))
 	ms.AddGauge("NextGC", float64(memStats.NextGC))
 	ms.AddGauge("NumForcedGC", float64(memStats.NumForcedGC))
@@ -44,27 +53,31 @@ func WriteMetric(ms memstorage.MetricsStorer) {
 
 func SendMetric(address string, ms memstorage.MetricsStorer) error {
 	var (
-		client   = resty.New()
+		client = resty.New().
+			SetHeader("Content-Type", "application/json")
 		gauges   = ms.GetAllGauges()
 		counters = ms.GetAllCounters()
+		uri      = fmt.Sprintf("http://%s/update", address)
 	)
 	for key, val := range gauges {
-		_, err := client.R().SetPathParams(map[string]string{
-			"name":    key,
-			"value":   fmt.Sprintf("%f", val),
-			"address": address,
-		}).Post("http://{address}/update/gauge/{name}/{value}")
+		data := MetricsJSON{
+			ID:    key,
+			MType: "gauge",
+			Value: &val,
+		}
+		_, err := client.R().SetBody(&data).Post(uri)
 		if err != nil {
 			return err
 		}
 	}
 
 	for key, val := range counters {
-		_, err := client.R().SetPathParams(map[string]string{
-			"name":    key,
-			"value":   fmt.Sprintf("%d", val),
-			"address": address,
-		}).Post("http://{address}/update/counter/{name}/{value}")
+		data := MetricsJSON{
+			ID:    key,
+			MType: "counter",
+			Delta: &val,
+		}
+		_, err := client.R().SetBody(&data).Post(uri)
 		if err != nil {
 			return err
 		}

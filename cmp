@@ -1,0 +1,31 @@
+count PollCount" PollCount
+gauge RandomValue" RandomValue
+gauge Alloc" Alloc
+gauge BuckHashSys" BuckHashSys
+gauge Frees" Frees
+gauge GCCPUFraction" GCCPUFraction 
+gauge GCSys" GCSys
+gauge HeapAlloc" HeapAlloc
+gauge HeapIdle" HeapIdle
+gauge HeapInuse" HeapInuse
+gauge HeapObjects" HeapObjects
+gauge HeapReleased" HeapReleased
+gauge HeapSys" HeapSys
+gauge LastGC" LastGC
+gauge Lookups" Lookups
+gauge MCacheInuse" MCacheInuse
+gauge MCacheSys", MCacheSys
+gauge MSpanInuse" MSpanInuse
+gauge MSpanSys" MSpanSys
+gauge Mallocs" Mallocs
+gauge NextGC" NextGC
+gauge NumForcedGC" NumForcedGC
+gauge NumGC" NumGC
+gauge OtherSys" OtherSys
+gauge PauseTotalNs" PauseTotalNs
+gauge StackInuse" StackInuse
+gauge StackSys" StackSys
+gauge Sys" Sys
+gauge TotalAlloc" TotalAlloc
+
+
