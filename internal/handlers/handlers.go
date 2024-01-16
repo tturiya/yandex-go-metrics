@@ -25,7 +25,7 @@ func UpdateCounterHandler(w http.ResponseWriter, r *http.Request) {
 
 	urlValueInt64, err := strconv.ParseInt(urlValue, 0, 64)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	Metrics.AddCounter(urlName, urlValueInt64)
@@ -41,7 +41,7 @@ func UpdateGaugeHandler(w http.ResponseWriter, r *http.Request) {
 
 	urlValueFloat64, err := strconv.ParseFloat(urlValue, 64)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	Metrics.AddGauge(urlName, urlValueFloat64)
