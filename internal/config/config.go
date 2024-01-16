@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"log"
 	"os"
 	"strconv"
 )
@@ -50,7 +51,10 @@ func (ac *AgentConfig) parseAgent() {
 
 // Server configuration
 type ServerConfig struct {
-	Addr string
+	Addr          string
+	StoreInterval int
+	StorageFP     string
+	Restore       bool
 }
 
 // Constructs ServerConfig with input data from flags and env
@@ -63,9 +67,31 @@ func NewServerConfig() *ServerConfig {
 
 func (sc *ServerConfig) parseServer() {
 	flag.StringVar(&sc.Addr, "a", ":8080", "address and port to run server")
+	flag.IntVar(&sc.StoreInterval, "i", 300, "write metrics to persistent"+
+		" storage every -i n secs.")
+	flag.StringVar(&sc.StorageFP, "f", "/tmp/metrics-db.json",
+		"file to store the data.")
+	flag.BoolVar(&sc.Restore, "r", true, "Use persistent storage")
 	flag.Parse()
 
 	if envRunAddr := os.Getenv("ADDRESS"); envRunAddr != "" {
 		sc.Addr = envRunAddr
+	}
+	if envStoreInt := os.Getenv("STORE_INTERVAL"); envStoreInt != "" {
+		n, err := strconv.Atoi(envStoreInt)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		sc.StoreInterval = n
+	}
+	if envFileStoragePath := os.Getenv("FILE_STORAGE_PATH"); envFileStoragePath != "" {
+		sc.StorageFP = envFileStoragePath
+	}
+	if envRestore := os.Getenv("RESTORE"); envRestore != "" {
+		bv, err := strconv.ParseBool(envRestore)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		sc.Restore = bv
 	}
 }
